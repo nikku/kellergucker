@@ -1,0 +1,6 @@
+.idea/
+var/
+target/
+node_modules/
+/nb-configuration.xml
+/nbactions.xml

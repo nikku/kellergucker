@@ -1,0 +1,76 @@
+#!/bin/sh
+
+#####
+#
+# Setup/Tear down script for a kellergucker development environment
+#
+# - requires docker to be installed
+# - usage: env (up|down|status)
+#
+#####
+
+
+DATA_DIR="$(pwd)/var"
+
+POSTGRES_DATA_DIR="$DATA_DIR/postgres"
+
+
+function print_usage {
+  echo "usage: $(basename "$0") (up|down|status)"
+}
+
+function up {
+
+  down
+
+  echo "start postgres"
+
+  docker run -d \
+    --name kellergucker-postgres \
+    --label kellergucker \
+    -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
+    -e POSTGRES_USER=app \
+    -e PGDATA="/var/lib/postgresql/data/pgdata" \
+    -v "$POSTGRES_DATA_DIR":"/var/lib/postgresql/data" \
+    -p 5432:5432 \
+    postgres:9.5 > /dev/null
+}
+
+function down {
+
+  local RUNNING=$(docker ps -f "label=kellergucker" -q)
+  local CREATED=$(docker ps -a -f "label=kellergucker" -q)
+
+  if [[ "$RUNNING" != "" ]]; then
+    echo "stopping containers"
+
+    docker kill $RUNNING > /dev/null
+  fi
+
+  if [[ "$CREATED" != "" ]]; then
+    echo "cleaning up"
+
+    docker rm $CREATED > /dev/null
+  fi
+}
+
+function status {
+  echo "status?"
+}
+
+
+case "$1" in
+  "up")
+    up
+    ;;
+  "down")
+    down
+    ;;
+  "status")
+    status
+    ;;
+  *)
+    print_usage
+    exit 1
+    ;;
+esac
