@@ -1,0 +1,12 @@
+{
+  "name": "Your Name",
+  "email": "your@email",
+  "triggers": [
+    {
+      "symbol": "DXET.DE",
+      "name": "DB X-TR.EO STOXX 50 ETF DR 1C",
+      "buy": 33,
+      "sell": -1
+    }
+  ]
+}
