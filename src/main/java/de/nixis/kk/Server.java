@@ -85,6 +85,7 @@ public class Server {
     http.exception(Exception.class, (exception, request, response) -> {
 
       int errorCode = 500;
+      String message = "Ooops, this was an error.";
       
       if (exception instanceof ApplicationException) {
         errorCode = ((ApplicationException) exception).getCode();
@@ -93,16 +94,18 @@ public class Server {
       // log severe errors
       if (errorCode >= 500) {
         LOGGER.error("Unhandled error", exception);
+      } else {
+        message = exception.getMessage();
       }
 
       response.status(errorCode);
 
       if (acceptsJson(request)) {
-        response.body(Json.stringify(Status.error()));
+        response.body(Json.stringify(Status.error(message)));
       } else {
         response.body(
           "<h1>HTTP " + errorCode + "</h1>" +
-          "<p>Ooops, this was an error!</p>"
+          "<p>" + message + "</p>"
         );
       }
     });

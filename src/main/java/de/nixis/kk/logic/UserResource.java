@@ -10,6 +10,7 @@ import helpers.BadRequestException;
 import helpers.util.Ids;
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
+import org.sql2o.Sql2oException;
 
 
 /**
@@ -59,6 +60,13 @@ public class UserResource {
             .addParameter("created", new Date())
             .executeUpdate();
       });
+    } catch (Sql2oException e) {
+
+      if (isConstraintViolation(e)) {
+        throw new BadRequestException("duplicate key (email?)", e);
+      } else {
+        throw e;
+      }
     }
 
     return id;
@@ -131,5 +139,9 @@ public class UserResource {
           .addParameter("id", id)
           .executeUpdate();
     }
+  }
+
+  private static boolean isConstraintViolation(Sql2oException e) {
+    return e.getMessage().contains("duplicate key value");
   }
 }

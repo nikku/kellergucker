@@ -11,8 +11,8 @@ import lombok.experimental.Accessors;
 public class Status {
 
   private String status;
-
-
+  private String message;
+  
   public static Status created() {
 
     Status s = new Status();
@@ -42,6 +42,15 @@ public class Status {
 
     Status s = new Status();
     s.status = "error";
+
+    return s;
+  }
+
+  public static Status error(String message) {
+
+    Status s = new Status();
+    s.status = "error";
+    s.message = message;
 
     return s;
   }
