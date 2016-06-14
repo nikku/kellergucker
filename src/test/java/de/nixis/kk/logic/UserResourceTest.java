@@ -82,14 +82,14 @@ public class UserResourceTest {
             "name=BAR, " +
             "symbol=CAA1, " +
             "url=https://finance.yahoo.com/q?s=CAA1, " +
-            "triggers=Stock.Triggers(buy=100.0, sell=300.0), " +
+            "triggers=Triggers(buy=100.0, sell=300.0), " +
             "quotes=Quotes(open=-1.0, close=-1.0, high=-1.0, low=-1.0, volume=-1.0, adjustedClose=-1.0, updated=null)" +
           "), " +
           "Stock(" +
             "name=FOO, " +
             "symbol=CXX1, " +
             "url=https://finance.yahoo.com/q?s=CXX1, " +
-            "triggers=Stock.Triggers(buy=100.0, sell=300.0), " +
+            "triggers=Triggers(buy=100.0, sell=300.0), " +
             "quotes=Quotes(open=-1.0, close=-1.0, high=-1.0, low=-1.0, volume=-1.0, adjustedClose=-1.0, updated=null)" +
           ")" +
         "]";

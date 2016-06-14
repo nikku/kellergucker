@@ -1,7 +1,7 @@
 import java.time.LocalDate;
 import java.util.List;
 
-import de.nixis.kk.data.user.Quotes;
+import de.nixis.kk.data.stocks.Quotes;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

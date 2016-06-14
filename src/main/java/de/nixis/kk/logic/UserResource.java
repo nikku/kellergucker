@@ -3,8 +3,8 @@ package de.nixis.kk.logic;
 import java.util.Date;
 import java.util.List;
 
+import de.nixis.kk.data.stocks.Stock;
 import de.nixis.kk.data.user.CreateUser;
-import de.nixis.kk.data.user.Stock;
 import de.nixis.kk.data.user.UserDetails;
 import helpers.BadRequestException;
 import helpers.util.Ids;

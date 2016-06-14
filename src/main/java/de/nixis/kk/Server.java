@@ -6,9 +6,11 @@ import java.util.concurrent.TimeUnit;
 
 import de.nixis.kk.controller.HealthController;
 import de.nixis.kk.controller.RootController;
+import de.nixis.kk.controller.StockController;
 import de.nixis.kk.controller.UserController;
 import de.nixis.kk.data.ServerOptions;
 import de.nixis.kk.data.Status;
+import de.nixis.kk.logic.StockResource;
 import de.nixis.kk.logic.UserResource;
 import helpers.ApplicationException;
 import helpers.template.Templates;
@@ -60,11 +62,13 @@ public class Server {
 
     // logic
     UserResource userResource = new UserResource(db);
+    StockResource stockResource = new StockResource(db);
 
     // controllers
     RootController rootController = new RootController(templates);
     HealthController healthController = new HealthController(templates, db);
     UserController userController = new UserController(templates, userResource, options);
+    StockController stockController = new StockController(templates, stockResource, options);
 
     // routes
     http.get("/", rootController::index);
@@ -74,6 +78,8 @@ public class Server {
     http.post("/users", userController::createUser);
     http.get("/users/:id", userController::getUser);
     http.delete("/users/:id", userController::removeUser);
+
+    http.get("/stocks", stockController::list);
 
     // error handling
     http.exception(Exception.class, (exception, request, response) -> {

@@ -1,4 +1,4 @@
-package de.nixis.kk.data.user;
+package de.nixis.kk.data.stocks;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
