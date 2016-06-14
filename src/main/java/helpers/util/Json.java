@@ -2,6 +2,7 @@ package helpers.util;
 
 import java.io.IOException;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import helpers.BadRequestException;
@@ -19,6 +20,8 @@ public class Json {
   
   static {
     MAPPER = new ObjectMapper();
+    
+    MAPPER.setSerializationInclusion(JsonInclude.Include.NON_NULL);
   }
 
   public static <T> T parse(Class<T> cls, String text) {

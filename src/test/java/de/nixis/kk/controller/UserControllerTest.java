@@ -7,6 +7,7 @@ import de.nixis.kk.data.user.CreateTrigger;
 import de.nixis.kk.data.user.CreateUser;
 import helpers.AbstractServerTest;
 import helpers.JsonContent;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static java.util.Arrays.asList;
@@ -19,6 +20,12 @@ import static org.assertj.core.api.Assertions.fail;
  */
 public class UserControllerTest extends AbstractServerTest {
 
+  @BeforeClass
+  public static void setupSchema() {
+    migrations.migrate();
+  }
+
+  
   @Test
   public void shouldAddUser() throws Exception {
 
@@ -75,8 +82,8 @@ public class UserControllerTest extends AbstractServerTest {
 
     String expectedBody =
       "{\"name\":\"FOO\",\"email\":\"foo@bar\",\"created\":00000,\"stocks\":[" +
-        "{\"name\":\"BAR\",\"symbol\":\"CAA1\",\"url\":\"https://finance.yahoo.com/q?s=CAA1\",\"triggers\":{\"buy\":100.0,\"sell\":300.0},\"quotes\":{\"open\":-1.0,\"close\":-1.0,\"high\":-1.0,\"low\":-1.0,\"volume\":-1.0,\"adjustedClose\":-1.0,\"updated\":null}}," +
-        "{\"name\":\"FOO\",\"symbol\":\"CXX1\",\"url\":\"https://finance.yahoo.com/q?s=CXX1\",\"triggers\":{\"buy\":100.0,\"sell\":300.0},\"quotes\":{\"open\":-1.0,\"close\":-1.0,\"high\":-1.0,\"low\":-1.0,\"volume\":-1.0,\"adjustedClose\":-1.0,\"updated\":null}}" +
+        "{\"name\":\"BAR\",\"symbol\":\"CAA1\",\"url\":\"https://finance.yahoo.com/q?s=CAA1\",\"triggers\":{\"buy\":100.0,\"sell\":300.0},\"quotes\":{\"open\":-1.0,\"close\":-1.0,\"high\":-1.0,\"low\":-1.0,\"volume\":-1.0,\"adjustedClose\":-1.0}}," +
+        "{\"name\":\"FOO\",\"symbol\":\"CXX1\",\"url\":\"https://finance.yahoo.com/q?s=CXX1\",\"triggers\":{\"buy\":100.0,\"sell\":300.0},\"quotes\":{\"open\":-1.0,\"close\":-1.0,\"high\":-1.0,\"low\":-1.0,\"volume\":-1.0,\"adjustedClose\":-1.0}}" +
       "]}";
 
     String responseBody = response.parseAsString().replaceFirst("\"created\":[^,]+", "\"created\":00000");
