@@ -3,9 +3,9 @@ package de.nixis.kk.controller;
 import com.google.api.client.http.HttpResponse;
 import de.nixis.kk.data.user.CreateTrigger;
 import de.nixis.kk.data.user.CreateUser;
-import helpers.AbstractServerTest;
 import helpers.JsonContent;
-import org.junit.BeforeClass;
+import helpers.env.ServerEnvironment;
+import org.junit.ClassRule;
 import org.junit.Test;
 
 import static java.util.Arrays.asList;
@@ -15,14 +15,14 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @author nikku
  */
-public class UserControllerTest extends AbstractServerTest {
+public class UserControllerTest {
 
-  @BeforeClass
-  public static void setupSchema() {
-    migrations.migrate();
-  }
+  @ClassRule
+  public static ServerEnvironment env = new ServerEnvironment() {{
+    executeMigrations = true;
+  }};
 
-  
+
   @Test
   public void shouldAddUser() throws Exception {
 
@@ -50,7 +50,7 @@ public class UserControllerTest extends AbstractServerTest {
 
     // when
     HttpResponse response =
-            client.request("POST /users")
+            env.client().request("POST /users")
               .setContent(JsonContent.create(details))
               .execute();
 

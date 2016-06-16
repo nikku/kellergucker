@@ -6,9 +6,9 @@ import java.util.List;
 import de.nixis.kk.data.stocks.Stock;
 import de.nixis.kk.data.user.CreateTrigger;
 import de.nixis.kk.data.user.CreateUser;
-import helpers.AbstractDbTest;
+import helpers.env.DatabaseEnvironment;
 import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 
 import static java.util.Arrays.asList;
@@ -17,20 +17,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Created by nikku on 6/12/16.
  */
-public class StockResourceTest extends AbstractDbTest {
+public class StockResourceTest {
+
+  @Rule
+  public DatabaseEnvironment env = new DatabaseEnvironment() {{
+    executeMigrations = true;
+  }};
 
   private UserResource userResource;
   private StockResource stockResource;
 
-  @BeforeClass
-  public static void beforeClass() {
-    migrations.clean().migrate();
-  }
-
   @Before
   public void before() {
-    userResource = new UserResource(db);
-    stockResource = new StockResource(db);
+    userResource = new UserResource(env.db());
+    stockResource = new StockResource(env.db());
   }
 
 
@@ -58,7 +58,7 @@ public class StockResourceTest extends AbstractDbTest {
           .setName("FOO")
           .setTriggers(asList(trigger1, trigger2));
 
-    String id = userResource.createUser(details);
+    userResource.createUser(details);
 
     // when
     stockResource.updateQuotes(LocalDate.of(2014, 10, 24));

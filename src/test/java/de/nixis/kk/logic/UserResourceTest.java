@@ -3,9 +3,9 @@ package de.nixis.kk.logic;
 import de.nixis.kk.data.user.CreateTrigger;
 import de.nixis.kk.data.user.CreateUser;
 import de.nixis.kk.data.user.UserDetails;
-import helpers.AbstractDbTest;
+import helpers.env.DatabaseEnvironment;
 import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 
 import static java.util.Arrays.asList;
@@ -14,18 +14,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Created by nikku on 6/12/16.
  */
-public class UserResourceTest extends AbstractDbTest {
+public class UserResourceTest {
+
+  @Rule
+  public DatabaseEnvironment env = new DatabaseEnvironment() {{
+    executeMigrations = true;
+  }};
+
 
   private UserResource userResource;
 
-  @BeforeClass
-  public static void beforeClass() {
-    migrations.clean().migrate();
-  }
-
   @Before
   public void before() {
-    userResource = new UserResource(db);
+    userResource = new UserResource(env.db());
   }
 
 
@@ -89,7 +90,7 @@ public class UserResourceTest extends AbstractDbTest {
 
     // then
     UserDetails removedDetails = userResource.getDetails(id);
-    
+
     assertThat(removedDetails).isNull();
   }
 }
