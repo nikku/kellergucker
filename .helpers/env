@@ -9,53 +9,21 @@
 #
 #####
 
-
-DATA_DIR="$(pwd)/var"
-
-POSTGRES_DATA_DIR="$DATA_DIR/postgres"
-
-
 function print_usage {
   echo "usage: $(basename "$0") (up|down|status)"
 }
 
 function up {
-
   down
-
-  echo "start postgres"
-
-  docker run -d \
-    --name kellergucker-postgres \
-    --label kellergucker \
-    -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
-    -e POSTGRES_USER=app \
-    -e PGDATA="/var/lib/postgresql/data/pgdata" \
-    -v "$POSTGRES_DATA_DIR":"/var/lib/postgresql/data" \
-    -p 5432:5432 \
-    postgres:9.5 > /dev/null
+  docker-compose up -d postgres redis
 }
 
 function down {
-
-  local RUNNING=$(docker ps -f "label=kellergucker" -q)
-  local CREATED=$(docker ps -a -f "label=kellergucker" -q)
-
-  if [[ "$RUNNING" != "" ]]; then
-    echo "stopping containers"
-
-    docker kill $RUNNING > /dev/null
-  fi
-
-  if [[ "$CREATED" != "" ]]; then
-    echo "cleaning up"
-
-    docker rm $CREATED > /dev/null
-  fi
+  docker-compose down -v
 }
 
 function status {
-  echo "status?"
+  docker-compose ps
 }
 
 

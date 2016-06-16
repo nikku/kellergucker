@@ -1,0 +1,23 @@
+version: '2'
+
+services:
+
+    postgres:
+        image: postgres:9.5
+        container_name: kellergucker-postgres
+        labels:
+            - "kellergucker"
+        environment:
+            - POSTGRES_USER=app
+            - POSTGRES_PASSWORD
+        ports:
+            - "5432:5432"
+
+    redis:
+        image: redis:alpine
+        container_name: kellergucker-redis
+        labels:
+            - "kellergucker"
+        ports:
+            - "6379:6379"
+        command: redis-server --appendonly yes
