@@ -4,3 +4,4 @@ target/
 node_modules/
 /nb-configuration.xml
 /nbactions.xml
+.private

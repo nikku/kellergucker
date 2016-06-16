@@ -5,6 +5,7 @@ import de.nixis.kk.data.Status;
 import de.nixis.kk.data.user.CreateUser;
 import de.nixis.kk.data.user.UserDetails;
 import de.nixis.kk.logic.UserResource;
+import helpers.BadRequestException;
 import helpers.controller.AbstractController;
 import helpers.template.Templates;
 import spark.Request;
@@ -44,7 +45,7 @@ public class UserController extends AbstractController {
 
     String id = userResource.createUser(createDetails);
 
-    response.redirect("/users/" + id);
+    response.redirect("/users/" + id, 303);
 
     response.type(APPLICATION_JSON);
 
@@ -57,6 +58,10 @@ public class UserController extends AbstractController {
     String id = request.params(":id");
 
     UserDetails userDetails = userResource.getDetails(id);
+
+    if (userDetails == null) {
+      throw new BadRequestException("no record", 404);
+    }
 
     // we respond as json
     response.type(APPLICATION_JSON);

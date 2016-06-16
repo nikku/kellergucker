@@ -1,42 +1,30 @@
 package de.nixis.kk.logic;
 
-import de.nixis.kk.data.ServerOptions;
 import de.nixis.kk.data.user.CreateTrigger;
 import de.nixis.kk.data.user.CreateUser;
 import de.nixis.kk.data.user.UserDetails;
-import helpers.util.Migrations;
+import helpers.AbstractDbTest;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.sql2o.Sql2o;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Created by nikku on 6/12/16.
  */
-public class UserResourceTest {
-
-  private static final ServerOptions OPTIONS = ServerOptions.fromEnvironment();
-
-  private Sql2o db;
+public class UserResourceTest extends AbstractDbTest {
 
   private UserResource userResource;
 
   @BeforeClass
   public static void beforeClass() {
-
-    new Migrations(OPTIONS.getJdbcUrl())
-          .clean()
-          .migrate();
+    migrations.clean().migrate();
   }
 
   @Before
   public void before() {
-    db = new Sql2o(OPTIONS.getJdbcUrl(), null, null);
-
     userResource = new UserResource(db);
   }
 
@@ -83,14 +71,14 @@ public class UserResourceTest {
             "symbol=CAA1, " +
             "url=https://finance.yahoo.com/q?s=CAA1, " +
             "triggers=Triggers(buy=100.0, sell=300.0), " +
-            "quotes=Quotes(open=-1.0, close=-1.0, high=-1.0, low=-1.0, volume=-1.0, adjustedClose=-1.0, updated=null)" +
+            "quotes=Quote(open=-1.0, high=-1.0, low=-1.0, close=-1.0, volume=-1.0, adjustedClose=-1.0, date=null)" +
           "), " +
           "Stock(" +
             "name=FOO, " +
             "symbol=CXX1, " +
             "url=https://finance.yahoo.com/q?s=CXX1, " +
             "triggers=Triggers(buy=100.0, sell=300.0), " +
-            "quotes=Quotes(open=-1.0, close=-1.0, high=-1.0, low=-1.0, volume=-1.0, adjustedClose=-1.0, updated=null)" +
+            "quotes=Quote(open=-1.0, high=-1.0, low=-1.0, close=-1.0, volume=-1.0, adjustedClose=-1.0, date=null)" +
           ")" +
         "]";
 
@@ -100,11 +88,8 @@ public class UserResourceTest {
     userResource.removeUser(id);
 
     // then
-    assertThatThrownBy(() -> {
-
-      userResource.getDetails(id);
-
-    }).hasMessage("no record");
+    UserDetails removedDetails = userResource.getDetails(id);
+    
+    assertThat(removedDetails).isNull();
   }
-
 }

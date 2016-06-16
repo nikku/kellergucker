@@ -7,13 +7,13 @@ CREATE TABLE users (
 
 CREATE TABLE stocks (
   symbol VARCHAR(255) PRIMARY KEY,
-  updated timestamp,
+  date VARCHAR(255),
   open real,
   high real,
   low real,
   close real,
   volume real,
-  adjustedClose real
+  adjusted_close real
 );
 
 CREATE TABLE user_triggers (
@@ -23,5 +23,5 @@ CREATE TABLE user_triggers (
   buy real NOT NULL,
   sell real NOT NULL,
   created TIMESTAMP NOT NULL,
-  UNIQUE (user_id, stock_symbol)
+  PRIMARY KEY (user_id, stock_symbol)
 );

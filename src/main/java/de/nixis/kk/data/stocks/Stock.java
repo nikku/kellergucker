@@ -16,6 +16,6 @@ public class Stock {
 
   private Triggers triggers;
 
-  private Quotes quotes;
+  private Quote quotes;
 
 }

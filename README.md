@@ -31,7 +31,7 @@ mvn clean package
 ## Running
 
 ```
-ENV_OPTIONS java -jar target/app-$VERSION-fat.jar
+DB_MIGRATE=true java -jar target/app-$VERSION-fat.jar
 ```
 
 

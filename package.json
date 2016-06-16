@@ -4,7 +4,7 @@
   "description": "Kellergucker App",
   "scripts": {
     "all": "mvn clean package",
-    "dev": "amvn --watch --reload clean compile exec:java",
+    "dev": "DB_MIGRATE=true amvn --watch --reload clean compile exec:java",
     "env:up": ".helpers/env up",
     "env:down": ".helpers/env down",
     "image:build": ".helpers/build_image",

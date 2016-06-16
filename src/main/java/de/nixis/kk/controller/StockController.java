@@ -35,7 +35,7 @@ public class StockController extends AbstractController {
 
     ensureAdmin(request, options.getAdminKey());
 
-    List<Stock> userDetails = stockResource.list();
+    List<Stock> userDetails = stockResource.listStocks();
 
     // we respond as json
     response.type(APPLICATION_JSON);

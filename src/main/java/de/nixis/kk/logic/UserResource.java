@@ -93,7 +93,7 @@ public class UserResource {
           "COALESCE(s.close, -1) as \"quotes.close\", " +
           "COALESCE(s.high, -1) as \"quotes.high\", " +
           "COALESCE(s.low, -1) as \"quotes.low\", " +
-          "s.updated as \"quotes.updated\" " +
+          "s.date as \"quotes.date\" " +
         "FROM user_triggers t " +
           "LEFT JOIN stocks s ON (t.stock_symbol = s.symbol)" +
         "WHERE t.user_id = :id";
@@ -107,7 +107,7 @@ public class UserResource {
               .executeAndFetchFirst(UserDetails.class);
 
       if (userDetails == null) {
-        throw new BadRequestException("no record", 404);
+        return null;
       }
 
       List<Stock> stocks = c.createQuery(stocksSql)

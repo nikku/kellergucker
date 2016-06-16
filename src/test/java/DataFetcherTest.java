@@ -1,7 +1,7 @@
 import java.time.LocalDate;
 import java.util.List;
 
-import de.nixis.kk.data.stocks.Quotes;
+import de.nixis.kk.data.stocks.Quote;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,7 +20,7 @@ public class DataFetcherTest {
     LocalDate to = LocalDate.of(2013, 03, 01);
 
     // when
-    List<Quotes> prices = new DataFetcher().fetchQuotes(symbol, from, to);
+    List<Quote> prices = new DataFetcher().fetchQuotes(symbol, from, to);
 
     // then
     assertThat(prices).hasSize(42);
