@@ -9,31 +9,26 @@ import de.nixis.kk.controller.RootController;
 import de.nixis.kk.controller.StockController;
 import de.nixis.kk.controller.UserController;
 import de.nixis.kk.data.ServerOptions;
-import de.nixis.kk.data.Status;
 import de.nixis.kk.logic.StockResource;
 import de.nixis.kk.logic.UserResource;
-import helpers.ApplicationException;
 import helpers.template.Templates;
-import helpers.util.Json;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sql2o.Sql2o;
 import spark.Service;
-
-import static helpers.util.MediaType.acceptsJson;
 
 /**
  *
  * @author nikku
  */
 public class Server {
-  
+
   public static final int ONE_MINUTE_MS = 1000 * 60;
   public static final int ONE_DAY_MS = ONE_MINUTE_MS * 60 * 24;
 
   public static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
-  
+
   private final ServerOptions options;
 
   private Service http;
@@ -55,7 +50,7 @@ public class Server {
     // basic
     db = new Sql2o(options.getJdbcUrl(), null, null);
 
-    templates = new Templates().setCache(options.isProduction());
+    templates = new Templates().setCache(options.isCacheTemplates());
 
     http = Service.ignite().port(options.getPort());
 
@@ -82,33 +77,7 @@ public class Server {
     http.get("/stocks", stockController::list);
 
     // error handling
-    http.exception(Exception.class, (exception, request, response) -> {
-
-      int errorCode = 500;
-      String message = "Ooops, this was an error.";
-      
-      if (exception instanceof ApplicationException) {
-        errorCode = ((ApplicationException) exception).getCode();
-      }
-
-      // log severe errors
-      if (errorCode >= 500) {
-        LOGGER.error("Unhandled error", exception);
-      } else {
-        message = exception.getMessage();
-      }
-
-      response.status(errorCode);
-
-      if (acceptsJson(request)) {
-        response.body(Json.stringify(Status.error(message)));
-      } else {
-        response.body(
-          "<h1>HTTP " + errorCode + "</h1>" +
-          "<p>" + message + "</p>"
-        );
-      }
-    });
+    http.exception(Exception.class, new ErrorHandler());
 
 
     ///////// task scheduler /////////////////////////
@@ -121,7 +90,7 @@ public class Server {
 
     }, ONE_MINUTE_MS, ONE_DAY_MS, TimeUnit.DAYS);
 
-    
+
     http.awaitInitialization();
 
     LOGGER.info("Server running");
@@ -131,7 +100,7 @@ public class Server {
     http.stop();
     executor.shutdown();
     templates.destroy();
-    
+
     LOGGER.info("Server stopped");
   }
 

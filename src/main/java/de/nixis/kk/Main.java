@@ -23,7 +23,7 @@ public class Main {
       "\n *  DB_MIGRATE: " + options.isMigrate() +
       "\n *" +
       "\n *  PORT: " + options.getPort() +
-      "\n *  PRODUCTION: " + options.isProduction() +
+      "\n *  CACHE_TEMPLATES: " + options.isCacheTemplates() +
       "\n *  ADMIN_KEY: " + options.getAdminKey() +
       "\n *" +
       "\n *********************************************" +

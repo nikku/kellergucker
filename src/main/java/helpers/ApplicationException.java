@@ -2,7 +2,7 @@ package helpers;
 
 /**
  * Exception thrown to indicate errors inside the application.
- * 
+ *
  * @author nikku
  */
 public class ApplicationException extends RuntimeException {
@@ -26,4 +26,21 @@ public class ApplicationException extends RuntimeException {
   public int getCode() {
     return code;
   }
+
+  public boolean isServerError() {
+    return code >= 500;
+  }
+
+
+  //////// helpers /////////////////////////////////////////
+
+  public static ApplicationException wrap(String message, Exception exception) {
+
+    if (exception instanceof ApplicationException) {
+      return (ApplicationException) exception;
+    }
+
+    return new ApplicationException(message, exception);
+  }
+
 }

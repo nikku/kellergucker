@@ -15,8 +15,8 @@ public class ServerOptions implements Validatable {
   private int port = 8080;
 
   private boolean migrate = false;
-  
-  private boolean production = false;
+
+  private boolean cacheTemplates = false;
 
   private String jdbcUrl;
 
@@ -43,7 +43,7 @@ public class ServerOptions implements Validatable {
 
     boolean migrate = Boolean.parseBoolean(System.getenv("DB_MIGRATE"));
 
-    boolean production = Boolean.parseBoolean(System.getenv("PRODUCTION"));
+    boolean cacheTemplates = Boolean.parseBoolean(System.getenv("CACHE_TEMPLATES"));
 
     int port = -1;
 
@@ -57,8 +57,8 @@ public class ServerOptions implements Validatable {
         .setJdbcUrl(jdbcUrl == null ? DEFAULT_JDBC_URL : jdbcUrl)
         .setAdminKey(adminKey)
         .setPort(port != -1 ? port : DEFAULT_PORT)
-        .setProduction(production)
+        .setCacheTemplates(cacheTemplates)
         .setMigrate(migrate);
   }
-  
+
 }
