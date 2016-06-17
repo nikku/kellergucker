@@ -1,19 +1,17 @@
 package de.nixis.kk.logic;
 
+import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import de.nixis.kk.data.user.CreateTrigger;
 import de.nixis.kk.data.user.CreateUser;
 import de.nixis.kk.data.user.UserDetails;
-import helpers.env.DatabaseEnvironment;
+import de.nixis.kk.helpers.env.DatabaseEnvironment;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static java.util.Arrays.asList;
-import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Created by nikku on 6/12/16.
- */
 public class UserResourceTest {
 
   @Rule
@@ -21,14 +19,12 @@ public class UserResourceTest {
     executeMigrations = true;
   }};
 
-
   private UserResource userResource;
 
   @Before
   public void before() {
     userResource = new UserResource(env.db());
   }
-
 
   @Test
   public void shouldManage() {

@@ -1,4 +1,4 @@
-package helpers;
+package de.nixis.kk.helpers;
 
 /**
  * Exception thrown to indicate errors inside the application.

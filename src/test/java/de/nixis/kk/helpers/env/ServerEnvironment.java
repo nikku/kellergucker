@@ -1,13 +1,12 @@
-package helpers.env;
+package de.nixis.kk.helpers.env;
 
 import de.nixis.kk.Server;
 import de.nixis.kk.data.ServerOptions;
-import helpers.Client;
-import helpers.ClientOptions;
+import de.nixis.kk.helpers.Client;
+import de.nixis.kk.helpers.ClientOptions;
 import org.junit.ClassRule;
 import org.junit.Rule;
-import org.junit.runner.Description;
-import org.junit.runners.model.Statement;
+
 
 /**
  * A test environment that sets up database, migrations, client and server.
@@ -19,27 +18,8 @@ import org.junit.runners.model.Statement;
 public class ServerEnvironment extends DatabaseEnvironment {
 
   protected boolean startServer = true;
-
   private Server server;
   private Client client;
-
-  @Override
-  public Statement apply(Statement base, Description description) {
-
-    return new Statement() {
-
-      @Override
-      public void evaluate() throws Throwable {
-        setup();
-
-        try {
-          base.evaluate();
-        } finally {
-          tearDown();
-        }
-      }
-    };
-  }
 
   @Override
   protected void setup(ServerOptions serverOptions) {
@@ -48,9 +28,8 @@ public class ServerEnvironment extends DatabaseEnvironment {
 
     ClientOptions clientOptions = ClientOptions.fromOptions(serverOptions);
 
-    server = new Server(serverOptions);
-
-    client = new Client(clientOptions);
+    server = createServer(serverOptions);
+    client = createClient(clientOptions);
 
     if (startServer) {
       server.run();
@@ -62,6 +41,14 @@ public class ServerEnvironment extends DatabaseEnvironment {
     super.tearDown();
 
     server.stop();
+  }
+
+  protected Server createServer(ServerOptions serverOptions) {
+    return new Server(serverOptions);
+  }
+
+  protected Client createClient(ClientOptions clientOptions) {
+    return new Client(clientOptions);
   }
 
   public Client client() {

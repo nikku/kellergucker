@@ -1,4 +1,4 @@
-package helpers.util;
+package de.nixis.kk.helpers.util;
 
 import spark.Request;
 

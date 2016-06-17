@@ -1,17 +1,18 @@
 package de.nixis.kk;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 import de.nixis.kk.controller.HealthController;
 import de.nixis.kk.controller.RootController;
 import de.nixis.kk.controller.StockController;
 import de.nixis.kk.controller.UserController;
+import de.nixis.kk.data.MailerOptions;
 import de.nixis.kk.data.ServerOptions;
+import de.nixis.kk.helpers.template.Templates;
+import de.nixis.kk.logic.EmailNotifier;
 import de.nixis.kk.logic.StockResource;
 import de.nixis.kk.logic.UserResource;
-import helpers.template.Templates;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sql2o.Sql2o;
@@ -54,10 +55,18 @@ public class Server {
 
     http = Service.ignite().port(options.getPort());
 
+    // mailer
+    MailerOptions mailerOptions = options.getMailerOptions();
+
+    EmailNotifier emailNotifier = null;
+
+    if (mailerOptions != null) {
+      emailNotifier = new EmailNotifier(templates, mailerOptions);
+    }
 
     // logic
     UserResource userResource = new UserResource(db);
-    StockResource stockResource = new StockResource(db);
+    StockResource stockResource = new StockResource(db, emailNotifier);
 
     // controllers
     RootController rootController = new RootController(templates);
@@ -85,12 +94,20 @@ public class Server {
     executor = Executors.newScheduledThreadPool(1);
 
     executor.scheduleWithFixedDelay(() -> {
+      LOGGER.info("Update quotes");
 
-      // do scheduled work
+      stockResource.updateQuotes();
+    }, 3 * 1000, ONE_DAY_MS, TimeUnit.MILLISECONDS);
 
-    }, ONE_MINUTE_MS, ONE_DAY_MS, TimeUnit.DAYS);
+    // ONE_MINUTE_MS,
+    
+    executor.scheduleWithFixedDelay(() -> {
+      LOGGER.info("Send recommendations");
 
+      stockResource.sendRecommendations();
+    }, 10 * 1000, ONE_DAY_MS, TimeUnit.MILLISECONDS);
 
+    // ONE_MINUTE_MS * 5
     http.awaitInitialization();
 
     LOGGER.info("Server running");

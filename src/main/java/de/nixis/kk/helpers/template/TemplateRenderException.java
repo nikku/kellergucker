@@ -1,6 +1,6 @@
-package helpers.template;
+package de.nixis.kk.helpers.template;
 
-import helpers.ApplicationException;
+import de.nixis.kk.helpers.ApplicationException;
 
 /**
  * Created by nikku on 6/12/16.

@@ -3,8 +3,8 @@ package de.nixis.kk.controller;
 import com.google.api.client.http.HttpResponse;
 import de.nixis.kk.data.user.CreateTrigger;
 import de.nixis.kk.data.user.CreateUser;
-import helpers.JsonContent;
-import helpers.env.ServerEnvironment;
+import de.nixis.kk.helpers.JsonContent;
+import de.nixis.kk.helpers.env.ServerEnvironment;
 import org.junit.ClassRule;
 import org.junit.Test;
 

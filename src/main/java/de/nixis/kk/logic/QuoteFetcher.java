@@ -1,20 +1,21 @@
 package de.nixis.kk.logic;
 
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import static java.lang.Double.parseDouble;
 
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpResponse;
+import com.google.api.client.http.HttpResponseException;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import de.nixis.kk.data.stocks.Quote;
-import helpers.ApplicationException;
-
-import static java.lang.Double.parseDouble;
+import de.nixis.kk.helpers.ApplicationException;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 /**
@@ -28,15 +29,15 @@ public class QuoteFetcher {
   public QuoteFetcher() {
     this.client = new Client();
   }
-  
+
   /**
    * Fetch quotes for a given symbol for a given time range.
-   * 
+   *
    * @param symbol
    * @param from
    * @param to
-   * 
-   * @return 
+   *
+   * @return
    */
   public List<Quote> fetchQuotes(String symbol, LocalDate from, LocalDate to) {
 
@@ -61,17 +62,26 @@ public class QuoteFetcher {
 
         return quotes;
       }).collect(Collectors.toList());
+    } catch (HttpResponseException e) {
+
+      if (e.getStatusCode() != 404) {
+        throw new ApplicationException("query quotes failed", e);
+      }
+
     } catch (IOException e) {
       throw new ApplicationException("query quotes failed", e);
     }
+
+    return Collections.emptyList();
   }
 
   private static final String QUOTES_URL_PATTERN =
           "http://real-chart.finance.yahoo.com/table.csv?s=%s&a=%s&b=%s&c=%s&d=%s&e=%s&f=%s&g=d&ignore=.csv";
-  
+
   protected String getQuotesUrl(String symbol, LocalDate from, LocalDate to) {
 
-    return String.format(
+    String url =
+          String.format(
               QUOTES_URL_PATTERN,
               symbol,
               from.getMonthValue() - 1,
@@ -80,6 +90,8 @@ public class QuoteFetcher {
               to.getMonthValue() - 1,
               to.getDayOfMonth(),
               to.getYear());
+
+    return url;
   }
 
 
@@ -106,7 +118,7 @@ public class QuoteFetcher {
     public HttpRequest request(String url) throws IOException {
       return requestFactory.buildRequest("GET", new GenericUrl(url), null);
     }
-  
+
   }
 
 }

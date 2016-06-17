@@ -1,4 +1,4 @@
-package helpers.util;
+package de.nixis.kk.helpers.util;
 
 import java.util.Collection;
 

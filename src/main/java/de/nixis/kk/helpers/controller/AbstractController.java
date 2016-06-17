@@ -1,7 +1,7 @@
-package helpers.controller;
+package de.nixis.kk.helpers.controller;
 
-import helpers.template.Templates;
-import helpers.util.Json;
+import de.nixis.kk.helpers.template.Templates;
+import de.nixis.kk.helpers.util.Json;
 
 /**
  *

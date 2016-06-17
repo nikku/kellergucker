@@ -1,17 +1,13 @@
 package de.nixis.kk.logic;
 
-import java.time.LocalDate;
-import java.util.List;
-
-import de.nixis.kk.data.stocks.Quote;
-import org.junit.Test;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- *
- * @author nikku
- */
+import de.nixis.kk.data.stocks.Quote;
+import java.time.LocalDate;
+import java.util.List;
+import org.junit.Test;
+
+
 public class QuoteFetcherTest {
 
   @Test

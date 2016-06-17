@@ -1,4 +1,4 @@
-package helpers;
+package de.nixis.kk.helpers;
 
 /**
  * Created by nikku on 6/12/16.

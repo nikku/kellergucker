@@ -1,6 +1,6 @@
 package de.nixis.kk.data;
 
-import helpers.util.Validatable;
+import de.nixis.kk.helpers.util.Validatable;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -21,6 +21,8 @@ public class ServerOptions implements Validatable {
   private String jdbcUrl;
 
   private String adminKey;
+
+  private MailerOptions mailerOptions;
 
   @Override
   public boolean isValid() {
@@ -47,13 +49,30 @@ public class ServerOptions implements Validatable {
 
     int port = -1;
 
+    String mailerHost = System.getenv("MAILER_HOST");
+    String mailerUsername = System.getenv("MAILER_USERNAME");
+    String mailerPassword = System.getenv("MAILER_PASSWORD");
+    Boolean mailerUseTLS = Boolean.parseBoolean(System.getenv("MAILER_USE_TLS"));
+
+    MailerOptions mailerOptions = null;
+
     try {
       port = Integer.parseInt(System.getenv("PORT"));
     } catch (NumberFormatException e) {
       ; // don't care
     }
 
+    if (mailerHost != null) {
+      mailerOptions =
+          new MailerOptions()
+              .setHost(mailerHost)
+              .setUsername(mailerUsername)
+              .setPassword(mailerPassword)
+              .setUseTLS(mailerUseTLS);
+    }
+
     return new ServerOptions()
+        .setMailerOptions(mailerOptions)
         .setJdbcUrl(jdbcUrl == null ? DEFAULT_JDBC_URL : jdbcUrl)
         .setAdminKey(adminKey)
         .setPort(port != -1 ? port : DEFAULT_PORT)

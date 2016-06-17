@@ -1,11 +1,11 @@
-package helpers.util;
+package de.nixis.kk.helpers.util;
 
 import java.io.IOException;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import helpers.BadRequestException;
+import de.nixis.kk.helpers.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

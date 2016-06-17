@@ -1,7 +1,9 @@
-package helpers.env;
+package de.nixis.kk.helpers.env;
+
+import static de.nixis.kk.helpers.Ports.getPort;
 
 import de.nixis.kk.data.ServerOptions;
-import helpers.util.Migrations;
+import de.nixis.kk.helpers.util.Migrations;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.rules.TestRule;
@@ -9,14 +11,11 @@ import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.sql2o.Sql2o;
 
-import static helpers.Ports.getPort;
 
 /**
  * A test environment that sets up database and migrations.
  *
  * Use as test rule, annotated as {@link ClassRule} or {@link Rule} in your test setup.
- *
- * @author nikku
  */
 public class DatabaseEnvironment implements TestRule {
 
@@ -25,13 +24,9 @@ public class DatabaseEnvironment implements TestRule {
   };
 
   protected ServerOptionsProducer serverOptionsProducer = DEFAULT_OPTIONS_PRODUCER;
-
   protected boolean executeMigrations = false;
-
   private Sql2o db;
-
   private Migrations migrations;
-
 
   public DatabaseEnvironment() {
     this.serverOptionsProducer = DEFAULT_OPTIONS_PRODUCER;

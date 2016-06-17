@@ -1,9 +1,8 @@
 package de.nixis.kk.data.user;
 
+import java.util.Date;
 import lombok.Data;
 import lombok.experimental.Accessors;
-
-import java.util.Date;
 
 /**
  * Created by nikku on 6/12/16.
@@ -12,6 +11,7 @@ import java.util.Date;
 @Accessors(chain = true)
 public class User {
 
+  private String id;
   private String name;
   private String email;
   private Date created;

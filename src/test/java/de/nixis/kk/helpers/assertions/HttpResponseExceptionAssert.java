@@ -1,17 +1,13 @@
-package helpers.assertions;
-
-import java.io.IOException;
-
-import com.google.api.client.http.HttpResponseException;
-import helpers.util.Json;
-import org.assertj.core.api.AbstractThrowableAssert;
+package de.nixis.kk.helpers.assertions;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- *
- * @author nikku
- */
+import com.google.api.client.http.HttpResponseException;
+import de.nixis.kk.helpers.util.Json;
+import java.io.IOException;
+import org.assertj.core.api.AbstractThrowableAssert;
+
+
 public class HttpResponseExceptionAssert extends AbstractThrowableAssert<HttpResponseExceptionAssert, HttpResponseException> {
 
   public HttpResponseExceptionAssert(HttpResponseException actual) {
@@ -40,11 +36,29 @@ public class HttpResponseExceptionAssert extends AbstractThrowableAssert<HttpRes
     return myself;
   }
 
-  public HttpResponseExceptionAssert hasLocationHeader(String expectedLocation) throws IOException {
+  public HttpResponseExceptionAssert containsPayload(String body) throws IOException {
+
+    String actualPayload = actual.getContent();
+
+    assertThat(actualPayload).describedAs("has payload").contains(body);
+
+    return myself;
+  }
+
+  public HttpResponseExceptionAssert hasLocation(String expectedLocation) throws IOException {
     String location = actual.getHeaders().getLocation();
 
     assertThat(location).describedAs("has location header").isEqualTo(expectedLocation);
 
     return myself;
   }
+
+  public HttpResponseExceptionAssert hasContentType(String expectedContentType) {
+    String contentType = actual.getHeaders().getContentType();
+
+    assertThat(contentType).describedAs("has content type").isEqualTo(expectedContentType);
+
+    return myself;
+  }
+
 }

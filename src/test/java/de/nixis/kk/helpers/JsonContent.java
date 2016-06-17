@@ -1,10 +1,10 @@
-package helpers;
+package de.nixis.kk.helpers;
 
 import java.io.UnsupportedEncodingException;
 
 import com.google.api.client.http.ByteArrayContent;
 import com.google.api.client.http.HttpContent;
-import helpers.util.Json;
+import de.nixis.kk.helpers.util.Json;
 
 /**
  *

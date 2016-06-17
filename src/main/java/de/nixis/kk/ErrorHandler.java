@@ -1,8 +1,8 @@
 package de.nixis.kk;
 
 import de.nixis.kk.data.Status;
-import helpers.ApplicationException;
-import helpers.util.Json;
+import de.nixis.kk.helpers.ApplicationException;
+import de.nixis.kk.helpers.util.Json;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.ExceptionHandler;
@@ -10,8 +10,8 @@ import spark.HaltException;
 import spark.Request;
 import spark.Response;
 
-import static helpers.util.MediaType.APPLICATION_JSON;
-import static helpers.util.MediaType.acceptsJson;
+import static de.nixis.kk.helpers.util.MediaType.APPLICATION_JSON;
+import static de.nixis.kk.helpers.util.MediaType.acceptsJson;
 
 /**
  *

@@ -2,8 +2,8 @@ package de.nixis.kk.controller;
 
 import de.nixis.kk.data.Health;
 import de.nixis.kk.data.user.User;
-import helpers.template.Templates;
-import helpers.controller.AbstractController;
+import de.nixis.kk.helpers.template.Templates;
+import de.nixis.kk.helpers.controller.AbstractController;
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
 import spark.Request;

@@ -1,4 +1,4 @@
-package helpers;
+package de.nixis.kk.helpers;
 
 import de.nixis.kk.data.ServerOptions;
 import lombok.Data;

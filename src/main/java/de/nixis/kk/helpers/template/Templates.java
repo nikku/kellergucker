@@ -1,9 +1,4 @@
-package helpers.template;
-
-import java.io.IOException;
-import java.io.StringWriter;
-import java.nio.charset.Charset;
-import java.util.Locale;
+package de.nixis.kk.helpers.template;
 
 import freemarker.cache.CacheStorage;
 import freemarker.cache.MruCacheStorage;
@@ -15,18 +10,20 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateNotFoundException;
 import freemarker.template.Version;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.nio.charset.Charset;
+import java.util.Locale;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import spark.ModelAndView;
 
-/**
- *
- * @author nikku
- */
+
 @Accessors(chain = true)
 public class Templates {
 
   private static final Version FREEMARKER_VERSION = Configuration.getVersion();
+  private static final String FREEMARKER_EXTENSION = ".ftl";
 
   private final Configuration configuration;
 
@@ -35,7 +32,7 @@ public class Templates {
     configuration = new Configuration(FREEMARKER_VERSION);
 
     configuration.loadBuiltInEncodingMap();
-    
+
     configuration.setObjectWrapper(new DefaultObjectWrapperBuilder(FREEMARKER_VERSION).build());
     configuration.setDefaultEncoding("UTF-8");
     configuration.setClassForTemplateLoading(Templates.class, "/templates");
@@ -48,7 +45,14 @@ public class Templates {
   public String render(ModelAndView modelAndView, Locale locale) {
     try {
       Charset charset = Charset.forName(configuration.getEncoding(locale));
-      Template template = configuration.getTemplate(modelAndView.getViewName(), locale, charset.name());
+
+      String viewName = modelAndView.getViewName();
+
+      if (!viewName.endsWith(FREEMARKER_EXTENSION)) {
+        viewName += FREEMARKER_EXTENSION;
+      }
+
+      Template template = configuration.getTemplate(viewName, locale, charset.name());
 
       StringWriter writer = new StringWriter();
 
@@ -71,9 +75,6 @@ public class Templates {
 
   /**
    * Create freemarker configuration.
-   * 
-   * @param enabled
-   * @return 
    */
   public Templates setCache(boolean enabled) {
 

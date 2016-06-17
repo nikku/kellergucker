@@ -15,7 +15,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 
-public class StockResourceTest {
+public class StockResourceNotifierTest {
 
   @Rule
   public DatabaseEnvironment env = new DatabaseEnvironment() {{
@@ -25,8 +25,11 @@ public class StockResourceTest {
   private UserResource userResource;
   private StockResource stockResource;
 
+  private EmailNotifier emailNotifier;
+
   @Before
   public void before() {
+
     userResource = new UserResource(env.db());
     stockResource = new StockResource(env.db(), null);
   }

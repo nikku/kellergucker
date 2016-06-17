@@ -5,13 +5,13 @@ import java.util.List;
 import de.nixis.kk.data.ServerOptions;
 import de.nixis.kk.data.stocks.Stock;
 import de.nixis.kk.logic.StockResource;
-import helpers.controller.AbstractController;
-import helpers.template.Templates;
+import de.nixis.kk.helpers.controller.AbstractController;
+import de.nixis.kk.helpers.template.Templates;
 import spark.Request;
 import spark.Response;
 
-import static helpers.util.Asserts.ensureAdmin;
-import static helpers.util.MediaType.APPLICATION_JSON;
+import static de.nixis.kk.helpers.util.Asserts.ensureAdmin;
+import static de.nixis.kk.helpers.util.MediaType.APPLICATION_JSON;
 
 /**
  *

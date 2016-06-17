@@ -1,6 +1,6 @@
-package helpers.util;
+package de.nixis.kk.helpers.util;
 
-import helpers.BadRequestException;
+import de.nixis.kk.helpers.BadRequestException;
 import spark.Request;
 
 /**

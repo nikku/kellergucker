@@ -2,7 +2,7 @@ package de.nixis.kk.data.user;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
-import helpers.util.Validatable;
+import de.nixis.kk.helpers.util.Validatable;
 
 /**
  * Created by nikku on 6/12/16.

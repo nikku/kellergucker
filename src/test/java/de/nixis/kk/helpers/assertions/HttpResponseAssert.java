@@ -1,17 +1,13 @@
-package helpers.assertions;
-
-import java.io.IOException;
-
-import com.google.api.client.http.HttpResponse;
-import helpers.util.Json;
-import org.assertj.core.api.AbstractAssert;
+package de.nixis.kk.helpers.assertions;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- *
- * @author nikku
- */
+import com.google.api.client.http.HttpResponse;
+import de.nixis.kk.helpers.util.Json;
+import java.io.IOException;
+import org.assertj.core.api.AbstractAssert;
+
+
 public class HttpResponseAssert extends AbstractAssert<HttpResponseAssert, HttpResponse> {
 
   public HttpResponseAssert(HttpResponse actual) {
@@ -47,4 +43,14 @@ public class HttpResponseAssert extends AbstractAssert<HttpResponseAssert, HttpR
 
     return myself;
   }
+
+  public HttpResponseAssert containsPayload(String body) throws IOException {
+
+    String actualPayload = actual.parseAsString();
+
+    assertThat(actualPayload).describedAs("has payload").contains(body);
+
+    return myself;
+  }
+
 }

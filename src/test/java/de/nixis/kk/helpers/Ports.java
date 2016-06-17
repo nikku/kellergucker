@@ -1,4 +1,4 @@
-package helpers;
+package de.nixis.kk.helpers;
 
 import java.io.IOException;
 import java.net.ServerSocket;

@@ -1,7 +1,8 @@
 package de.nixis.kk;
 
+import de.nixis.kk.data.MailerOptions;
 import de.nixis.kk.data.ServerOptions;
-import helpers.util.Migrations;
+import de.nixis.kk.helpers.util.Migrations;
 
 
 /**
@@ -14,6 +15,8 @@ public class Main {
 
     ServerOptions options = ServerOptions.fromEnvironment();
 
+    MailerOptions mailerOptions = options.getMailerOptions();
+
     System.out.println(
       "\n *********************************************" +
       "\n *" +
@@ -25,6 +28,12 @@ public class Main {
       "\n *  PORT: " + options.getPort() +
       "\n *  CACHE_TEMPLATES: " + options.isCacheTemplates() +
       "\n *  ADMIN_KEY: " + options.getAdminKey() +
+      "\n *" +
+      "\n *  MAILER: " + (
+            mailerOptions != null ?
+              "(host: " + mailerOptions.getHost() + ", username: " + mailerOptions.getUsername() + ", useTLS: " + mailerOptions.isUseTLS() + ")" :
+              "NULL"
+            ) +
       "\n *" +
       "\n *********************************************" +
       "\n"

@@ -1,16 +1,19 @@
 package de.nixis.kk.logic;
 
-import java.time.LocalDate;
-import java.util.List;
+import static java.time.LocalDate.now;
 
 import de.nixis.kk.data.stocks.Quote;
+import de.nixis.kk.data.stocks.Recommendation;
 import de.nixis.kk.data.stocks.Stock;
+import de.nixis.kk.data.user.User;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
-
-import static java.time.LocalDate.now;
 
 /**
  *
@@ -19,9 +22,11 @@ import static java.time.LocalDate.now;
 public class StockResource {
 
   private final Sql2o db;
+  private final EmailNotifier emailNotifier;
 
-  public StockResource(Sql2o db) {
+  public StockResource(Sql2o db, EmailNotifier emailNotifier) {
     this.db = db;
+    this.emailNotifier = emailNotifier;
   }
 
   public List<String> listSymbols() {
@@ -34,7 +39,7 @@ public class StockResource {
   }
 
   public List<Stock> listStocks() {
-    
+
     String stocksSql =
       "SELECT " +
         "DISTINCT t.stock_symbol as \"symbol\", " +
@@ -48,6 +53,40 @@ public class StockResource {
 
     try (Connection c = db.open()) {
       return c.createQuery(stocksSql).executeAndFetch(Stock.class);
+    }
+  }
+
+  public List<Recommendation> getChangeRecommendations() {
+    String selectRecommendationSql =
+        "SELECT " +
+          "t.stock_symbol as \"stock.symbol\", " +
+          "t.name as \"stock.name\", " +
+          "t.buy as \"stock.triggers.buy\", " +
+          "t.sell as \"stock.triggers.sell\", " +
+          "s.open as \"stock.quotes.open\", " +
+          "s.close as \"stock.quotes.close\", " +
+          "s.high as \"stock.quotes.high\", " +
+          "s.low as \"stock.quotes.low\", " +
+          "s.date as \"stock.quotes.date\", " +
+          "(CASE " +
+            "WHEN t.buy <> -1 AND s.high < t.buy THEN 'BUY' " +
+            "WHEN t.sell <> -1 AND s.low > t.sell THEN 'SELL' " +
+            "ELSE 'HOLD' " +
+          "END) as type, " +
+          "u.id as \"user.id\", " +
+          "u.name as \"user.name\", " +
+          "u.email as \"user.email\" " +
+        "FROM user_triggers t " +
+          "JOIN stocks s ON (t.stock_symbol = s.symbol) " +
+          "JOIN users u ON (t.user_id = u.id) " +
+        "WHERE (CASE " +
+            "WHEN t.buy <> -1 AND s.high < t.buy THEN 'BUY' " +
+            "WHEN t.sell <> -1 AND s.low > t.sell THEN 'SELL' " +
+            "ELSE 'HOLD' " +
+          "END) <> 'HOLD'";
+
+    try (Connection c = db.open()) {
+      return c.createQuery(selectRecommendationSql).executeAndFetch(Recommendation.class);
     }
   }
 
@@ -67,7 +106,7 @@ public class StockResource {
     try {
       symbols.forEach((symbol) -> {
 
-        LOGGER.info("Update quotes for <" + symbol + ">");
+        LOGGER.info("Fetch <" + symbol + ">");
 
         LocalDate from = to.minusDays(7);
 
@@ -102,6 +141,10 @@ public class StockResource {
               ":symbol, :date, :open, :high, :low, :close, :volume, :adjustedClose" +
             ") ON CONFLICT (symbol, date) DO NOTHING";
 
+    if (quotes.isEmpty()) {
+      return;
+    }
+
     try (Connection c = db.open()) {
 
       for (Quote quote: quotes) {
@@ -133,5 +176,27 @@ public class StockResource {
     try (Connection c = db.open()) {
       return c.createQuery(selectHistoricStockSql).addParameter("symbol", symbol).executeAndFetch(Stock.class);
     }
+  }
+
+  public void sendRecommendations() {
+
+    if (emailNotifier == null) {
+      LOGGER.info("Skipping recommendations: No notifier configured");
+
+      return;
+    }
+
+
+    List<Recommendation> recommendations = getChangeRecommendations();
+
+    LOGGER.info("{} recommendations", recommendations.size());
+
+    Map<User, List<Recommendation>> groupedRecommendations = recommendations.stream().collect(Collectors.groupingBy((r) -> {
+      return r.getUser();
+    }));
+
+    groupedRecommendations.forEach((user, userRecommendations) -> {
+      emailNotifier.sendNotificationEmail(user, userRecommendations);
+    });
   }
 }
