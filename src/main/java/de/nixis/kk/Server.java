@@ -29,13 +29,13 @@ public class Server {
   public static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
 
-  private final ServerOptions options;
+  protected final ServerOptions options;
 
-  private Service http;
-  private Sql2o db;
-  private Templates templates;
+  protected Service http;
+  protected Sql2o db;
+  protected Templates templates;
 
-  private ScheduledExecutorService executor;
+  protected ScheduledExecutorService executor;
 
   public Server(ServerOptions options) {
     this.options = options;

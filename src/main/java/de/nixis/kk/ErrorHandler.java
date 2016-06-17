@@ -10,6 +10,7 @@ import spark.HaltException;
 import spark.Request;
 import spark.Response;
 
+import static helpers.util.MediaType.APPLICATION_JSON;
 import static helpers.util.MediaType.acceptsJson;
 
 /**
@@ -20,7 +21,6 @@ public class ErrorHandler implements ExceptionHandler {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ErrorHandler.class);
 
-  
   @Override
   public void handle(Exception e, Request request, Response response) {
 
@@ -41,6 +41,8 @@ public class ErrorHandler implements ExceptionHandler {
     // TODO(nikku): application exception messages do not leak
     // any secrets and are save to transmit to the client (?)
     if (acceptsJson(request)) {
+      response.type(APPLICATION_JSON);
+
       response.body(Json.stringify(Status.error(exception.getMessage())));
     } else {
       response.body(
