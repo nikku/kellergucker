@@ -13,6 +13,7 @@ import de.nixis.kk.helpers.ApplicationException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -25,6 +26,10 @@ import java.util.stream.Stream;
 public class QuoteFetcher {
 
   private final Client client;
+  
+  private Comparator<? super Quote> BY_DATE = (a, b) -> {
+    return a.getDate().compareTo(b.getDate());
+  };
 
   public QuoteFetcher() {
     this.client = new Client();
@@ -61,7 +66,8 @@ public class QuoteFetcher {
               .setAdjustedClose(parseDouble(columns[6]));
 
         return quotes;
-      }).collect(Collectors.toList());
+      }).sorted(BY_DATE).collect(Collectors.toList());
+
     } catch (HttpResponseException e) {
 
       if (e.getStatusCode() != 404) {
