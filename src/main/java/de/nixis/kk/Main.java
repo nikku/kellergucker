@@ -17,26 +17,38 @@ public class Main {
 
     MailerOptions mailerOptions = options.getMailerOptions();
 
-    System.out.println(
+    String configurationOutput =
       "\n *********************************************" +
       "\n *" +
       "\n *  Kellergucker App" +
       "\n *" +
-      "\n *  DB_URL: " + options.getJdbcUrl() +
-      "\n *  DB_MIGRATE: " + options.isMigrate() +
+      "\n *  DB_URL: %s" +
+      "\n *  DB_MIGRATE: %s" +
       "\n *" +
-      "\n *  PORT: " + options.getPort() +
-      "\n *  CACHE_TEMPLATES: " + options.isCacheTemplates() +
-      "\n *  ADMIN_KEY: " + options.getAdminKey() +
+      "\n *  PORT: %s" +
+      "\n *  CACHE_TEMPLATES: %s" +
+      "\n *  ADMIN_KEY: %s" +
       "\n *" +
-      "\n *  MAILER: " + (
-            mailerOptions != null ?
-              "(host: " + mailerOptions.getHost() + ", username: " + mailerOptions.getUsername() + ", useTLS: " + mailerOptions.isUseTLS() + ")" :
-              "NULL"
-            ) +
+      "\n *  MAILER_HOST: %s" +
+      "\n *  MAILER_PORT: %s" +
+      "\n *  MAILER_USERNAME: %s" +
+      "\n *  MAILER_PASSWORD: %s" +
       "\n *" +
       "\n *********************************************" +
-      "\n"
+      "\n";
+
+    System.out.println(
+      String.format(configurationOutput,
+        options.getJdbcUrl(),
+        options.isMigrate(),
+        options.getPort(),
+        options.isCacheTemplates(),
+        options.getAdminKey(),
+        mailerOptions.getHost(),
+        mailerOptions.getPort(),
+        mailerOptions.getUsername(),
+        mailerOptions.getPassword()
+      )
     );
 
     if (options.isMigrate()) {

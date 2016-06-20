@@ -79,9 +79,11 @@ public class StockResourceTest {
     // given
     createStocks();
 
+    LocalDate date = LocalDate.of(2014, 10, 24);
+
     stockResource.updateQuotes(LocalDate.of(2014, 10, 24));
 
-    List<Recommendation> recommendations = stockResource.getChangeRecommendations();
+    List<Recommendation> recommendations = stockResource.getChangeRecommendations(date.minusDays(1));
 
     System.out.println(recommendations);
   }

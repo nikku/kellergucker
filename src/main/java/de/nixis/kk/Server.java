@@ -8,8 +8,10 @@ import de.nixis.kk.data.MailerOptions;
 import de.nixis.kk.data.ServerOptions;
 import de.nixis.kk.helpers.template.Templates;
 import de.nixis.kk.logic.EmailNotifier;
+import de.nixis.kk.logic.Mailer;
 import de.nixis.kk.logic.StockResource;
 import de.nixis.kk.logic.UserResource;
+import java.time.LocalDate;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -58,11 +60,9 @@ public class Server {
     // mailer
     MailerOptions mailerOptions = options.getMailerOptions();
 
-    EmailNotifier emailNotifier = null;
+    Mailer mailer = new Mailer(mailerOptions);
 
-    if (mailerOptions != null) {
-      emailNotifier = new EmailNotifier(templates, mailerOptions);
-    }
+    EmailNotifier emailNotifier = new EmailNotifier(templates, mailer);
 
     // logic
     UserResource userResource = new UserResource(db);
@@ -100,11 +100,11 @@ public class Server {
     }, 3 * 1000, ONE_DAY_MS, TimeUnit.MILLISECONDS);
 
     // ONE_MINUTE_MS,
-    
+
     executor.scheduleWithFixedDelay(() -> {
       LOGGER.info("Send recommendations");
 
-      stockResource.sendRecommendations();
+      stockResource.sendRecommendations(LocalDate.now());
     }, 10 * 1000, ONE_DAY_MS, TimeUnit.MILLISECONDS);
 
     // ONE_MINUTE_MS * 5

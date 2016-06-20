@@ -49,27 +49,13 @@ public class ServerOptions implements Validatable {
 
     int port = -1;
 
-    String mailerHost = System.getenv("MAILER_HOST");
-    String mailerUsername = System.getenv("MAILER_USERNAME");
-    String mailerPassword = System.getenv("MAILER_PASSWORD");
-    Boolean mailerUseTLS = Boolean.parseBoolean(System.getenv("MAILER_USE_TLS"));
-
-    MailerOptions mailerOptions = null;
-
     try {
       port = Integer.parseInt(System.getenv("PORT"));
     } catch (NumberFormatException e) {
       ; // don't care
     }
 
-    if (mailerHost != null) {
-      mailerOptions =
-          new MailerOptions()
-              .setHost(mailerHost)
-              .setUsername(mailerUsername)
-              .setPassword(mailerPassword)
-              .setUseTLS(mailerUseTLS);
-    }
+    MailerOptions mailerOptions = MailerOptions.fromEnvironment();
 
     return new ServerOptions()
         .setMailerOptions(mailerOptions)

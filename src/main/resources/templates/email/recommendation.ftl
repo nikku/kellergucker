@@ -1,8 +1,22 @@
-${ recommendation.size } recommendation(s) for you
+[kellegucker] ${ recommendations?size } investment recommendation(s)
 
 ---
 
-${ bar }</h1>
-<h1>The above text is set using a PebbleTemplateEngine</h1>
+<#list recommendations as r>
+* ${r.stock.name}
 
-asd asdsad
+  <#if r.type == "BUY">
+  ${r.type} below ${r.stock.triggers.buy} (current ${r.stock.quotes.close}).
+  <#else>
+  ${r.type} above ${r.stock.triggers.sell} (current ${r.stock.quotes.close}).
+  </#if>
+
+  https://finance.yahoo.com/q?s=${r.stock.symbol}
+
+</#list>
+
+Have fun with it!
+
+---
+
+Die Gucker.

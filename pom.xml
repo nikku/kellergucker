@@ -98,6 +98,12 @@
       <version>3.4.1</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>com.icegreen</groupId>
+      <artifactId>greenmail</artifactId>
+      <version>1.5.0</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>

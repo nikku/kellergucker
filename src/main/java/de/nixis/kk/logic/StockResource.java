@@ -7,6 +7,7 @@ import de.nixis.kk.data.stocks.Recommendation;
 import de.nixis.kk.data.stocks.Stock;
 import de.nixis.kk.data.user.User;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -56,7 +57,7 @@ public class StockResource {
     }
   }
 
-  public List<Recommendation> getChangeRecommendations() {
+  public List<Recommendation> getChangeRecommendations(LocalDate localDate) {
     String selectRecommendationSql =
         "SELECT " +
           "t.stock_symbol as \"stock.symbol\", " +
@@ -79,14 +80,16 @@ public class StockResource {
         "FROM user_triggers t " +
           "JOIN stocks s ON (t.stock_symbol = s.symbol) " +
           "JOIN users u ON (t.user_id = u.id) " +
-        "WHERE (CASE " +
+        "WHERE s.date >= :lastDate AND (CASE " +
             "WHEN t.buy <> -1 AND s.high < t.buy THEN 'BUY' " +
             "WHEN t.sell <> -1 AND s.low > t.sell THEN 'SELL' " +
             "ELSE 'HOLD' " +
           "END) <> 'HOLD'";
 
     try (Connection c = db.open()) {
-      return c.createQuery(selectRecommendationSql).executeAndFetch(Recommendation.class);
+      return c.createQuery(selectRecommendationSql)
+              .addParameter("lastDate", localDate.toString())
+              .executeAndFetch(Recommendation.class);
     }
   }
 
@@ -103,20 +106,20 @@ public class StockResource {
 
     List<String> symbols = listSymbols();
 
-    try {
-      symbols.forEach((symbol) -> {
+    symbols.forEach((symbol) -> {
+      try {
 
-        LOGGER.info("Fetch <" + symbol + ">");
+          LocalDate from = to.minusDays(7);
 
-        LocalDate from = to.minusDays(7);
+          List<Quote> fetchedQuotes = quoteFetcher.fetchQuotes(symbol, from, to);
 
-        List<Quote> fetchedQuotes = quoteFetcher.fetchQuotes(symbol, from, to);
+          LOGGER.info("Fetched " + fetchedQuotes.size() + " quote(s) for <" + symbol + ">");
+          updateQuotes(symbol, fetchedQuotes);
+      } catch (Exception e) {
+        LOGGER.error("Failed to fetch quotes for <" + symbol + ">", e);
+      }
 
-        updateQuotes(symbol, fetchedQuotes);
-      });
-    } catch (Exception e) {
-      LOGGER.error("Failed to update quotes", e);
-    }
+    });
   }
 
   public void updateQuotes(String stockSymbol, List<Quote> quotes) {
@@ -178,25 +181,24 @@ public class StockResource {
     }
   }
 
-  public void sendRecommendations() {
+  public Map<User, List<Recommendation>> sendRecommendations(LocalDate localDate) {
 
     if (emailNotifier == null) {
       LOGGER.info("Skipping recommendations: No notifier configured");
 
-      return;
+      return Collections.emptyMap();
     }
 
+    List<Recommendation> allRecommendations = getChangeRecommendations(localDate);
 
-    List<Recommendation> recommendations = getChangeRecommendations();
+    LOGGER.info("{} recommendations", allRecommendations.size());
 
-    LOGGER.info("{} recommendations", recommendations.size());
-
-    Map<User, List<Recommendation>> groupedRecommendations = recommendations.stream().collect(Collectors.groupingBy((r) -> {
+    Map<User, List<Recommendation>> groupedRecommendations = allRecommendations.stream().collect(Collectors.groupingBy((r) -> {
       return r.getUser();
     }));
 
-    groupedRecommendations.forEach((user, userRecommendations) -> {
-      emailNotifier.sendNotificationEmail(user, userRecommendations);
-    });
+    emailNotifier.sendNotifications(groupedRecommendations);
+
+    return groupedRecommendations;
   }
 }

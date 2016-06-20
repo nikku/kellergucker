@@ -3,11 +3,13 @@ package de.nixis.kk.logic;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import de.nixis.kk.data.stocks.Recommendation;
-import de.nixis.kk.data.stocks.Stock;
+import de.nixis.kk.data.notifications.Identity;
+import de.nixis.kk.data.notifications.Mail;
 import de.nixis.kk.data.user.CreateTrigger;
 import de.nixis.kk.data.user.CreateUser;
 import de.nixis.kk.helpers.env.DatabaseEnvironment;
+import de.nixis.kk.helpers.mock.MockMailer;
+import de.nixis.kk.helpers.template.Templates;
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.Before;
@@ -25,13 +27,20 @@ public class StockResourceNotifierTest {
   private UserResource userResource;
   private StockResource stockResource;
 
+  private MockMailer mailer;
   private EmailNotifier emailNotifier;
+
+  private Templates templates;
 
   @Before
   public void before() {
 
+    mailer = new MockMailer();
+    templates = new Templates();
+    emailNotifier = new EmailNotifier(templates, mailer);
+
     userResource = new UserResource(env.db());
-    stockResource = new StockResource(env.db(), null);
+    stockResource = new StockResource(env.db(), emailNotifier);
   }
 
   @Test
@@ -40,54 +49,35 @@ public class StockResourceNotifierTest {
     // given
     createStocks();
 
-    // when
-    stockResource.updateQuotes(LocalDate.of(2014, 10, 24));
-
-    List<Stock> stocks = stockResource.listStocks();
-    List<Stock> historicalStocks = stockResource.listHistoricalStocks("IS3N.DE");
-
-    // then
-    // both stocks inside
-    assertThat(stocks).hasSize(2);
-
-    // fetching last seven days, only six entries...
-    assertThat(historicalStocks).hasSize(6);
-  }
-
-  @Test
-  public void shouldUpdate() {
-
-    // given
-    createStocks();
-
-    stockResource.updateQuotes(LocalDate.of(2014, 10, 24));
+    LocalDate date = LocalDate.of(2015, 10, 21);
 
     // when
-    stockResource.updateQuotes(LocalDate.of(2014, 10, 28));
+    stockResource.updateQuotes(date);
 
-    List<Stock> stocks = stockResource.listStocks();
-    List<Stock> historicalStocks = stockResource.listHistoricalStocks("IS3N.DE");
+    stockResource.sendRecommendations(date.minusDays(1));
 
     // then
-    // both stocks inside
-    assertThat(stocks).hasSize(2);
+    List<Mail> mails = mailer.getSentMails();
 
-    // 6 + 2 additional entries
-    assertThat(historicalStocks).hasSize(8);
+    assertThat(mails).hasSize(1);
+
+    Mail mail = mails.get(0);
+
+    String body = mail.getBody();
+
+    assertThat(mail.getReceiver()).isEqualTo(Identity.create("FOO", "foo@bar"));
+    assertThat(mail.getSubject()).isEqualTo("[kellegucker] 2 investment recommendation(s)");
+
+    assertThat(body).contains(
+      "* ISHS-CO.MSCI EM.MAR.IMI UC.ETF",
+      "SELL above 16 (current 19.02).",
+      "https://finance.yahoo.com/q?s=IS3N.DE",
+      "* DB X-TR.EO STOXX 50 ETF DR 1C" +
+      "BUY below 43 (current 42.37)." +
+      "https://finance.yahoo.com/q?s=DXET.DE"
+    );
   }
 
-  @Test
-  public void shouldRecommend() {
-
-    // given
-    createStocks();
-
-    stockResource.updateQuotes(LocalDate.of(2014, 10, 24));
-
-    List<Recommendation> recommendations = stockResource.getChangeRecommendations();
-
-    System.out.println(recommendations);
-  }
 
   protected void createStocks() {
     // given
@@ -95,15 +85,15 @@ public class StockResourceNotifierTest {
         new CreateTrigger()
             .setName("DB X-TR.EO STOXX 50 ETF DR 1C")
             .setSymbol("DXET.DE")
-            .setBuy(100)
-            .setSell(300);
+            .setBuy(43)
+            .setSell(-1);
 
     CreateTrigger trigger2 =
         new CreateTrigger()
             .setName("ISHS-CO.MSCI EM.MAR.IMI UC.ETF")
             .setSymbol("IS3N.DE")
-            .setBuy(100)
-            .setSell(300);
+            .setBuy(-1)
+            .setSell(16);
 
     CreateUser details =
         new CreateUser()
