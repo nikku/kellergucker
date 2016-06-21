@@ -6,8 +6,11 @@ A stock value tracker application.
 ## Features
 
 * Configure shares + triggers
-* Monitor stock prices __TBD__
-* Notify on trigger reached __TBD__
+* Monitor stock prices
+* Notify via Email on trigger reached
+* Show overview page __TBD__
+
+See [docs](./docs) for detailed usage instructions.
 
 
 ## Development
