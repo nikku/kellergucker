@@ -166,15 +166,16 @@ public class StockResource {
     String selectHistoricStockSql =
       "SELECT " +
         "s.symbol, " +
-        "COALESCE(s.open, -1) as \"quotes.open\", " +
-        "COALESCE(s.high, -1) as \"quotes.high\", " +
-        "COALESCE(s.low, -1) as \"quotes.low\", " +
-        "COALESCE(s.close, -1) as \"quotes.close\", " +
-        "COALESCE(s.volume, -1) as \"quotes.volume\", " +
-        "COALESCE(s.adjusted_close, -1) as \"quotes.adjustedClose\", " +
+        "s.open as \"quotes.open\", " +
+        "s.high as \"quotes.high\", " +
+        "s.low as \"quotes.low\", " +
+        "s.close as \"quotes.close\", " +
+        "s.volume as \"quotes.volume\", " +
+        "s.adjusted_close as \"quotes.adjustedClose\", " +
         "s.date as \"quotes.date\" " +
       "FROM historic_stocks s " +
-      "WHERE s.symbol = :symbol";
+      "WHERE s.symbol = :symbol " +
+      "ORDER BY s.date";
 
     try (Connection c = db.open()) {
       return c.createQuery(selectHistoricStockSql).addParameter("symbol", symbol).executeAndFetch(Stock.class);

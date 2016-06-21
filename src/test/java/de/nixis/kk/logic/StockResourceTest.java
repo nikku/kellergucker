@@ -3,6 +3,7 @@ package de.nixis.kk.logic;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import de.nixis.kk.data.stocks.Quote;
 import de.nixis.kk.data.stocks.Recommendation;
 import de.nixis.kk.data.stocks.Stock;
 import de.nixis.kk.data.user.CreateTrigger;
@@ -43,12 +44,41 @@ public class StockResourceTest {
     List<Stock> stocks = stockResource.listStocks();
     List<Stock> historicalStocks = stockResource.listHistoricalStocks("IS3N.DE");
 
+    Stock expectedHistoricalFirst =
+            new Stock()
+              .setSymbol("IS3N.DE")
+              .setQuotes(
+                  new Quote()
+                    .setOpen(18.600)
+                    .setHigh(18.920)
+                    .setLow(18.480)
+                    .setClose(18.920)
+                    .setVolume(6100.0)
+                    .setAdjustedClose(18.920)
+                    .setDate("2014-10-17"));
+
+    Stock expectedHistoricalLast =
+            new Stock()
+              .setSymbol("IS3N.DE")
+              .setQuotes(
+                  new Quote()
+                    .setOpen(18.91)
+                    .setHigh(19.08)
+                    .setLow(18.87)
+                    .setClose(19.07)
+                    .setVolume(29400.0)
+                    .setAdjustedClose(19.07)
+                    .setDate("2014-10-24"));
+
     // then
     // both stocks inside
     assertThat(stocks).hasSize(2);
 
     // fetching last seven days, only six entries...
     assertThat(historicalStocks).hasSize(6);
+
+    assertThat(historicalStocks.get(0)).isEqualTo(expectedHistoricalFirst);
+    assertThat(historicalStocks.get(historicalStocks.size() - 1)).isEqualTo(expectedHistoricalLast);
   }
 
   @Test
