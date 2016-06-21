@@ -1,13 +1,12 @@
 package de.nixis.kk.logic;
 
-import java.util.Date;
-import java.util.List;
-
 import de.nixis.kk.data.stocks.Stock;
 import de.nixis.kk.data.user.CreateUser;
 import de.nixis.kk.data.user.UserDetails;
 import de.nixis.kk.helpers.BadRequestException;
 import de.nixis.kk.helpers.util.Ids;
+import java.util.Date;
+import java.util.List;
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
 import org.sql2o.Sql2oException;
