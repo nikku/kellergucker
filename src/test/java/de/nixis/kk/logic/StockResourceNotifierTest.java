@@ -72,8 +72,8 @@ public class StockResourceNotifierTest {
       "* ISHS-CO.MSCI EM.MAR.IMI UC.ETF",
       "SELL above 16 (current 19.02).",
       "https://finance.yahoo.com/q?s=IS3N.DE",
-      "* DB X-TR.EO STOXX 50 ETF DR 1C" +
-      "BUY below 43 (current 42.37)." +
+      "* DB X-TR.EO STOXX 50 ETF DR 1C",
+      "BUY below 44 (current 42.37)",
       "https://finance.yahoo.com/q?s=DXET.DE"
     );
   }
@@ -85,7 +85,7 @@ public class StockResourceNotifierTest {
         new CreateTrigger()
             .setName("DB X-TR.EO STOXX 50 ETF DR 1C")
             .setSymbol("DXET.DE")
-            .setBuy(43)
+            .setBuy(44)
             .setSell(-1);
 
     CreateTrigger trigger2 =
